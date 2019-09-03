@@ -5,6 +5,11 @@ import os
 import types
 import time
 import binascii
+import sys
+
+# if sys.version_info[0] > 2:
+#     print("Please use python3 or higher")
+#     sys.exit(1)
 # import importlib
 
 # moduleName = input('Decrypt')
