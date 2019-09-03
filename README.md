@@ -1,1 +1,6 @@
-https://pip.pypa.io/en/stable/installing/
+# Install Instructions
+* install python 3 - https://www.python.org/downloads/release/python-374/
+* install pip when installing pyhton 3 or use get-pip using these instructions -> https://pip.pypa.io/en/stable/installing/
+* open program directory in commandline
+* run pip install -r requirements.txt
+* run the application through console with "python decryptorator5000.py" or use the ui script "python decrypt_ui.py"
