@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from decryptorator5000 import read_text, print_list, is_solved, solve
 import random
 import sys
@@ -7,6 +8,9 @@ import PyQt5
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QWidget, QLabel, QApplication, QVBoxLayout, QHBoxLayout, QLayout, QPushButton, QMainWindow, QFileDialog, QTextEdit
 
+if sys.version_info[0] >= '3' or sys.version_info[1] >= '0':
+    print("Please use python3 or higher")
+    sys.exit(1)
 
 # !!! Im using an old pyqt5 file i used to learn qt5 !!!
 #####
@@ -76,6 +80,7 @@ def open_file(dia: QFileDialog, cipher_text: QTextEdit, plaintext_text: QTextEdi
 def solve_cipher(cipher_text: QTextEdit, plaintext_text: QTextEdit):
     if cipher_text.toPlainText() is "":
         print("No Text in Cipher object")
+        sys.exit(1)
         return
     # if cipher is None:
     #     print("No Cipher loaded")
