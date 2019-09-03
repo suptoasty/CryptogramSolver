@@ -8,7 +8,7 @@ import PyQt5
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QWidget, QLabel, QApplication, QVBoxLayout, QHBoxLayout, QLayout, QPushButton, QMainWindow, QFileDialog, QTextEdit
 
-if sys.version_info[0] >= '3' or sys.version_info[1] >= '0':
+if sys.version_info[0] >= 3 or sys.version_info[1] >= 0:
     print("Please use python3 or higher")
     sys.exit(1)
 
