@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from decryptorator5000 import read_text, print_list, is_solved, solve
+from decryptorator5000 import read_text, print_list, solve, text_to_list, read_plain_text
 import random
 import sys
 import types
@@ -7,10 +7,6 @@ import types
 import PyQt5
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QWidget, QLabel, QApplication, QVBoxLayout, QHBoxLayout, QLayout, QPushButton, QMainWindow, QFileDialog, QTextEdit
-
-# if sys.version_info[0] < 2:
-#     print("Please use python3 or higher")
-#     sys.exit(1)
 
 # !!! Im using an old pyqt5 file i used to learn qt5 !!!
 #####
@@ -72,9 +68,9 @@ plaintext: list = None
 def open_file(dia: QFileDialog, cipher_text: QTextEdit, plaintext_text: QTextEdit):
 	file = dia.getOpenFileName()
 	cipher = read_text(file[0])
-	cipher_text.setText(str(cipher))
+	cipher_text.setText(read_plain_text(file[0]))
 
-	plaintext = solve(list(cipher))
+	plaintext = solve(text_to_list(cipher_text.toPlainText()))
 	plaintext_text.setText(str(plaintext))
 
 def solve_cipher(cipher_text: QTextEdit, plaintext_text: QTextEdit):
@@ -82,10 +78,8 @@ def solve_cipher(cipher_text: QTextEdit, plaintext_text: QTextEdit):
         print("No Text in Cipher object")
         sys.exit(1)
         return
-    # if cipher is None:
-    #     print("No Cipher loaded")
-    #     return -1
-    plaintext = solve(list(cipher_text.toPlainText()))
+
+    plaintext = solve(text_to_list(cipher_text.toPlainText()))
     plaintext_text.setText(str(plaintext))
     return plaintext
 

@@ -4,64 +4,82 @@ import re
 import os
 import types
 import time
-import binascii
-import sys
 
-# if sys.version_info[0] > 2:
-#     print("Please use python3 or higher")
-#     sys.exit(1)
-# import importlib
+# common lists of word/letter orders in english
+letter_order: list = ['e', 't', ['a', 'i', 'o', 'n', 's'], 'h', 'r', 'd', 'l', 'u', ['c', 'm'], 'f', ['w', 'y'], ['g', 'p'], 'b', 'v', 'k', 'q', ['j', 'x'], 'z' ]
+single_letter_words: list = ['a', 'i']
+two_letter_words: list = ['in', 'on', 'an', 'of', 'so', 'or', 'is', 'to', 'go', 'am', 'us', 'me', 'up', 'he', 'we' 'by', 'as', 'at', 'my', 'no']
+diagraph_list_begin: list = ['ch', 'kn', 'ph', 'sh', 'th', 'wh', 'wr'] 
+diagraph_list_end: list = ['ch', 'ck', 'sh', 'ss', 'tch']
+vowel_diagraph_list: list = ['ai', 'ay', 'ee', 'ea', 'ie', 'oa', 'oe', 'ue', 'ui', 'oo']
 
-# moduleName = input('Decrypt')
-# importlib.import_module('Decrypt')
+# def encrypt(cipher:list, shift_amount: int)-> str:
+# 	asc: list = [] # us as map of used characters
+# 	word: str
+# 	for word in cipher:
+# 		pass
+# 	return asc
 
-previous_shifts: list = [0] #store the previous shifts tested when decrypting
+# def is_solved(cipher: list, plaintext: list)-> bool:
+# 	word: str
+# 	for word in cipher:
+# 		#if word is the same then cryptogram is not solved
+# 		if(word in plaintext):
+# 			return False
+# 		#if characters at the same position are in both lists then not solved
+# 		character: chr
+# 		for character in word:
+# 			return False
+# 	return True
 
-def encrypt(cipher:list, shift_amount: int)-> str:
-	asc: list = []
-	word: str
-	for word in cipher:
-		# asc.append(word.encode("ascii", "replace"))
-		character: chr
-		for character in word:
-			# print(character.encode("ascii", "replace"))
-			print(binascii.a2b_base64(word))
-	return asc
-
-def is_solved(cipher: list, plaintext: list)-> bool:
-	word: str
-	for word in cipher:
-		#if word is the same then cryptogram is not solved
-		if(word in plaintext):
-			return False
-		#if characters at the same position are in both lists then not solved
-		character: chr
-		for character in word:
-			return False
-	return True
-
-"""
-Solve using 
-"""
+# solves cryptogram taken in as a list of words
 def solve(cipher: list)-> list:
+	partial_text: list = []
 	plaintext: list = []
-	while not is_solved(cipher, plaintext):
-		break
-	plaintext.append("need")
-	plaintext.append("to")
-	plaintext.append("actual")
-	plaintext.append("solve")
+	# while not is_solved(cipher, plaintext):
+	# 	break
+
+	# dictionary makes it easy to index using current character
+	frequency_table: dict = get_frequency_table(list_to_string(cipher))
+
+	word: str
+	for word in cipher:
+		if(len(word)==1):
+			plaintext.append("a")
+			plaintext.append("i")
+	
+	for word in cipher:
+		if(len(word)==2):
+			plaintext.append("2letter")
+		if(len(word)>2):
+			plaintext.append("3plus")
+
 	return plaintext
+
+# takes string and makes frequency "table" of each character
+def get_frequency_table(string: str)->dict:
+	frequency_table: dict = {}
+	character: chr
+	for character in string:
+		if(character in frequency_table):
+			frequency_table[character] += 1
+		else:
+			frequency_table[character] = 1
+	return frequency_table
+
+# turns list of words into one string
+def list_to_string(m_list: list)->str:
+	return ''.join(str(i) for i in m_list)
 
 # lambda/regex function for converting cipher to map of words then a more useful list after stripping undesired symbols
 def text_to_list(text: str)-> list:
     return list(map(lambda x: re.sub("[,.!?]", "", x).lower(), text.split()))
-    """
-    *Sorry for the bad form of multiline string as a comment and for the long comment*
-    I think this runs in O(x)? My lambda calculus skills are non existant and my Big O are minimal
-    You're probably millennia ahead of what my Algorithm Analysis skills could ever be Prof. Nix
-    If you could take the time to tell me what this actually runs at, that would be appreciated
-    """
+
+def read_plain_text(file_name: str):
+	file = open(file_name, 'r')
+	text: str = file.read()
+	file.close()
+	return text
 
 # read text from file
 def read_text(file_name: str)-> list:
@@ -73,7 +91,6 @@ def read_text(file_name: str)-> list:
 # read from console
 def read_console()-> list:
     return text_to_list(input("Input Text: "))
-
 
 # prints words without newline
 def print_list(cipher: list):
@@ -106,6 +123,9 @@ if __name__ == "__main__":
 				print("Invlaid File Path Try Again: ")
 	else:
 		cipher = read_console()
+	# print(list_to_string(cipher))
 	plaintext: list = solve(cipher)
-	print_list(cipher)
+	print("Plain Text Is: ")
+	print_list(plaintext)
+	# print_list(cipher)
 	print("MSecs: ", int(round(time.time() * 1000))-time_before)
