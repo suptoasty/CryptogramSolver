@@ -33,28 +33,60 @@ vowel_diagraph_list: list = ['ai', 'ay', 'ee', 'ea', 'ie', 'oa', 'oe', 'ue', 'ui
 # 	return True
 
 # solves cryptogram taken in as a list of words
-def solve(cipher: list)-> list:
+def solve(cipher: list, use_i=False)-> list:
 	partial_text: list = []
-	plaintext: list = []
+	plaintext: list = cipher.copy()
 	# while not is_solved(cipher, plaintext):
 	# 	break
 
 	# dictionary makes it easy to index using current character
 	frequency_table: dict = get_frequency_table(list_to_string(cipher))
+	word_map: dict = {} # dict for storing which letters might be plain text letters
+	frequency_table_ordered: list = sort_dictionary_by_value(frequency_table)
 
+	# need to use frequency table on single letter words first
+	last_letter = ''
 	word: str
 	for word in cipher:
-		if(len(word)==1):
-			plaintext.append("a")
-			plaintext.append("i")
-	
-	for word in cipher:
-		if(len(word)==2):
-			plaintext.append("2letter")
-		if(len(word)>2):
-			plaintext.append("3plus")
+		if(len(word)==1 and not word in word_map):
+			last_letter = word
+			if(use_i): word_map[word] = "i"
+			else: word_map[word] = "a"
+			
+			# plaintext.append("a")
+			# plaintext.append("i")
 
+	# figure out how to replace letters in words in list
+	for word in plaintext:
+		if(word_map.get(word) is None):
+			continue
+		# word_freq: dict = get_frequency_table(word)
+		# for i in word_freq.keys():
+		# 	for n in frequency_table.keys():
+		# 		if(i==n):
+		# 			print("found same frequency at word: ", word)
+
+
+		# if(len(word)==1):
+		# 	word = word_map.get(word)
+		# for characte in word:
+		# 	if(characte == last_letter):
+		# 		characte = word_map.get(characte)
+		
+	# then replace other letters in the cipher with a or i
+	# move on to digraphs
+	# check cipher for those digraphs
+	# check for double ll, oo, etc
+	
+	# for word in cipher:
+	# 	if(len(word)==2):
+	# 		plaintext.append("2letter")
+	# 	if(len(word)>2):
+	# 		plaintext.append("3plus")
 	return plaintext
+
+def sort_dictionary_by_value(dictionary: dict)-> list:
+	return sorted(dictionary, key=dictionary.get, reverse=True)
 
 # takes string and makes frequency "table" of each character
 def get_frequency_table(string: str)->dict:
@@ -75,6 +107,7 @@ def list_to_string(m_list: list)->str:
 def text_to_list(text: str)-> list:
     return list(map(lambda x: re.sub("[,.!?]", "", x).lower(), text.split()))
 
+# returns string instead of list for ui
 def read_plain_text(file_name: str):
 	file = open(file_name, 'r')
 	text: str = file.read()
@@ -124,7 +157,7 @@ if __name__ == "__main__":
 	else:
 		cipher = read_console()
 	# print(list_to_string(cipher))
-	plaintext: list = solve(cipher)
+	plaintext: list = solve(cipher, False)
 	print("Plain Text Is: ")
 	print_list(plaintext)
 	# print_list(cipher)

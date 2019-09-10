@@ -70,7 +70,7 @@ def open_file(dia: QFileDialog, cipher_text: QTextEdit, plaintext_text: QTextEdi
 	cipher = read_text(file[0])
 	cipher_text.setText(read_plain_text(file[0]))
 
-	plaintext = solve(text_to_list(cipher_text.toPlainText()))
+	plaintext = solve(text_to_list(cipher_text.toPlainText()), True)
 	plaintext_text.setText(str(plaintext))
 
 def solve_cipher(cipher_text: QTextEdit, plaintext_text: QTextEdit):
@@ -79,7 +79,7 @@ def solve_cipher(cipher_text: QTextEdit, plaintext_text: QTextEdit):
         sys.exit(1)
         return
 
-    plaintext = solve(text_to_list(cipher_text.toPlainText()))
+    plaintext = solve(text_to_list(cipher_text.toPlainText()), True)
     plaintext_text.setText(str(plaintext))
     return plaintext
 
