@@ -42,7 +42,7 @@ def solve(cipher: list, use_i=False)-> list:
 	# dictionary makes it easy to index using current character
 	frequency_table: dict = get_frequency_table(list_to_string(cipher))
 	word_map: dict = {} # dict for storing which letters might be plain text letters
-	frequency_table_ordered: list = sort_dictionary_by_value(frequency_table)
+	frequency_table_ordered = sort_dictionary_by_value(frequency_table)
 
 	# need to use frequency table on single letter words first
 	last_letter = ''
@@ -85,8 +85,12 @@ def solve(cipher: list, use_i=False)-> list:
 	# 		plaintext.append("3plus")
 	return plaintext
 
-def sort_dictionary_by_value(dictionary: dict)-> list:
-	return sorted(dictionary, key=dictionary.get, reverse=True)
+def sort_dictionary_by_value(dictionary: dict)-> dict:
+	tab: dict = {}
+	for i in sorted(dictionary, key=dictionary.get, reverse=True):
+		tab[i] = dictionary[i]
+	return tab
+	# return sorted(dictionary, key=dictionary.get, reverse=True)
 
 # takes string and makes frequency "table" of each character
 def get_frequency_table(string: str)->dict:
