@@ -6,7 +6,7 @@ import types
 import time
 
 # common lists of word/letter orders in english
-letter_order: list = ['e', 't', ['a', 'i', 'o', 'n', 's'], 'h', 'r', 'd', 'l', 'u', ['c', 'm'], 'f', ['w', 'y'], ['g', 'p'], 'b', 'v', 'k', 'q', ['j', 'x'], 'z' ]
+letter_order: list = ['e', 't', 'a', 'i', 'o', 'n', 's', 'h', 'r', 'd', 'l', 'u', 'c', 'm', 'f', 'w', 'y', 'g', 'p', 'b', 'v', 'k', 'q', 'j', 'x', 'z' ]
 single_letter_words: list = ['a', 'i']
 two_letter_words: list = ['in', 'on', 'an', 'of', 'so', 'or', 'is', 'to', 'go', 'am', 'us', 'me', 'up', 'he', 'we' 'by', 'as', 'at', 'my', 'no']
 diagraph_list_begin: list = ['ch', 'kn', 'ph', 'sh', 'th', 'wh', 'wr'] 
@@ -22,25 +22,50 @@ def solve(cipher: list, use_i=False)-> list:
 	# dictionary makes it easy to index using current character
 	word_frequency_table:dict = sort_dictionary_by_value(get_frequency_table(plaintext))
 	letter_frequency_table: dict = sort_dictionary_by_value(get_frequency_table(list_to_string(plaintext)))
-	word_freq_list:dict = get_word_freq_list(plaintext)
+	word_freq_list:list = list(word_frequency_table)
+	letter_freq_list:list = list(letter_frequency_table)
 	word_map: dict = {} # dict for storing which letters might be plain text letters
 	
-	print("Letter Frequency: ", letter_frequency_table)
-	print("Word Frequency: ", word_frequency_table)
-	print("Word List: ", word_freq_list)
+	# print("Letter Frequency: ", letter_frequency_table)
+	# print("Word Frequency: ", word_frequency_table)
+	# print("Word List: ", word_freq_list)
+	# print("Letter list: ", letter_freq_list)
 
+	# word: str
+	# for word in plaintext:
+	# 	old_word = word
+	# 	if(letter_freq_list[0] in word):
+	# 		word = word.replace(letter_freq_list[0], 'e')
+	# 	if(letter_freq_list[1] in word):
+	# 		word = word.replace(letter_freq_list[1], 't')
+	# 	if(letter_freq_list[2] in word):
+	# 		word = word.replace(letter_freq_list[2], 'a')
+	# 	if(letter_freq_list[3] in word):
+	# 		word = word.replace(letter_freq_list[3], 'i')
+	# 	if(letter_freq_list[4] in word):
+	# 		word = word.replace(letter_freq_list[4], 'o')
+	# 	if(letter_freq_list[5] in word):
+	# 		word = word.replace(letter_freq_list[5], 's')
+	# 	if(letter_freq_list[6] in word):
+	# 		word = word.replace(letter_freq_list[6], 'h')
+	# 	partial_text.append(word)
+	# print("Partial text: ", partial_text, len(partial_text))
+	
 	character: chr
-	for character in letter_frequency_table:
-		pass
-
 	word: str
-	for word in word_frequency_table:
-		pass
+	for word in plaintext:
+		for character in word:
+			# if(character in letter_freq_list):
+			# 	character = letter_order[letter_freq_list.index(character)]
+			word = word.replace(character, letter_order[letter_freq_list.index(character)])
+		partial_text.append(word)
 
+	
+	plaintext = partial_text
 	return plaintext
 
 def get_word_freq_list(list: list)->list:
-	return list.sort(reverse = True)
+	return sorted(list)  
 
 # uses for loop and sorted to order a dictionary by value
 def sort_dictionary_by_value(dictionary: dict)-> dict:
