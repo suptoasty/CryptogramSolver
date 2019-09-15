@@ -22,10 +22,12 @@ def solve(cipher: list, use_i=False)-> list:
 	# dictionary makes it easy to index using current character
 	word_frequency_table:dict = sort_dictionary_by_value(get_frequency_table(plaintext))
 	letter_frequency_table: dict = sort_dictionary_by_value(get_frequency_table(list_to_string(plaintext)))
+	word_freq_list:dict = get_word_freq_list(plaintext)
 	word_map: dict = {} # dict for storing which letters might be plain text letters
 	
 	print("Letter Frequency: ", letter_frequency_table)
 	print("Word Frequency: ", word_frequency_table)
+	print("Word List: ", word_freq_list)
 
 	character: chr
 	for character in letter_frequency_table:
@@ -36,6 +38,9 @@ def solve(cipher: list, use_i=False)-> list:
 		pass
 
 	return plaintext
+
+def get_word_freq_list(list: list)->list:
+	return list.sort(reverse = True)
 
 # uses for loop and sorted to order a dictionary by value
 def sort_dictionary_by_value(dictionary: dict)-> dict:
