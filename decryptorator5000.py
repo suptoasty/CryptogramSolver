@@ -12,79 +12,32 @@ two_letter_words: list = ['in', 'on', 'an', 'of', 'so', 'or', 'is', 'to', 'go', 
 diagraph_list_begin: list = ['ch', 'kn', 'ph', 'sh', 'th', 'wh', 'wr'] 
 diagraph_list_end: list = ['ch', 'ck', 'sh', 'ss', 'tch']
 vowel_diagraph_list: list = ['ai', 'ay', 'ee', 'ea', 'ie', 'oa', 'oe', 'ue', 'ui', 'oo']
-
-# def encrypt(cipher:list, shift_amount: int)-> str:
-# 	asc: list = [] # us as map of used characters
-# 	word: str
-# 	for word in cipher:
-# 		pass
-# 	return asc
-
-# def is_solved(cipher: list, plaintext: list)-> bool:
-# 	word: str
-# 	for word in cipher:
-# 		#if word is the same then cryptogram is not solved
-# 		if(word in plaintext):
-# 			return False
-# 		#if characters at the same position are in both lists then not solved
-# 		character: chr
-# 		for character in word:
-# 			return False
-# 	return True
+word_list: list = ["the", "be", "to", "of", "and", "a", "in", "that", "have", "i", "it", "for", "not", "on", "with", "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "she", "or", "will", "an", "my", "one", "all", "would", "there", "their", "what", "so", "up", "out", "if", "about", "who", "get", "which", "go", "when", "me", "make", "can", "like", "time", "no", "just", "him", "know", "take", "person", "into", "year", "your", "good", "some", "could", "them", "see", "other", "than", "then", "now", "look", "only", "come", "its", "over", "think", "also", "back", "after", "use", "two", "how", "our", "work", "first", "well", "way", "even", "new", "want", "because", "any", "these", "give", "day", "most", "us"]
 
 # solves cryptogram taken in as a list of words
 def solve(cipher: list, use_i=False)-> list:
-	partial_text: list = []
 	plaintext: list = cipher.copy()
-	# while not is_solved(cipher, plaintext):
-	# 	break
+	partial_text: list = []
 
 	# dictionary makes it easy to index using current character
-	frequency_table: dict = get_frequency_table(list_to_string(cipher))
+	word_frequency_table:dict = sort_dictionary_by_value(get_frequency_table(plaintext))
+	letter_frequency_table: dict = sort_dictionary_by_value(get_frequency_table(list_to_string(plaintext)))
 	word_map: dict = {} # dict for storing which letters might be plain text letters
-	frequency_table_ordered = sort_dictionary_by_value(frequency_table)
-
-	# need to use frequency table on single letter words first
-	last_letter = ''
-	word: str
-	for word in cipher:
-		if(len(word)==1 and not word in word_map):
-			last_letter = word
-			if(use_i): word_map[word] = "i"
-			else: word_map[word] = "a"
-			
-			# plaintext.append("a")
-			# plaintext.append("i")
-
-	# figure out how to replace letters in words in list
-	for word in plaintext:
-		if(word_map.get(word) is None):
-			continue
-		# word_freq: dict = get_frequency_table(word)
-		# for i in word_freq.keys():
-		# 	for n in frequency_table.keys():
-		# 		if(i==n):
-		# 			print("found same frequency at word: ", word)
-
-
-		# if(len(word)==1):
-		# 	word = word_map.get(word)
-		# for characte in word:
-		# 	if(characte == last_letter):
-		# 		characte = word_map.get(characte)
-		
-	# then replace other letters in the cipher with a or i
-	# move on to digraphs
-	# check cipher for those digraphs
-	# check for double ll, oo, etc
 	
-	# for word in cipher:
-	# 	if(len(word)==2):
-	# 		plaintext.append("2letter")
-	# 	if(len(word)>2):
-	# 		plaintext.append("3plus")
+	print("Letter Frequency: ", letter_frequency_table)
+	print("Word Frequency: ", word_frequency_table)
+
+	character: chr
+	for character in letter_frequency_table:
+		pass
+
+	word: str
+	for word in word_frequency_table:
+		pass
+
 	return plaintext
 
+# uses for loop and sorted to order a dictionary by value
 def sort_dictionary_by_value(dictionary: dict)-> dict:
 	tab: dict = {}
 	for i in sorted(dictionary, key=dictionary.get, reverse=True):
@@ -102,6 +55,10 @@ def get_frequency_table(string: str)->dict:
 		else:
 			frequency_table[character] = 1
 	return frequency_table
+
+def get_word_frequency_table(l: list)-> dict:
+	freq = [l.count(p) for p in l]
+	return dict(zip(l, freq))
 
 # turns list of words into one string
 def list_to_string(m_list: list)->str:
@@ -135,7 +92,7 @@ def print_list(cipher: list):
 	for word in cipher:
 		print(word, end=" ")
 
-
+# cli drive for this script
 if __name__ == "__main__":
 	time_before: int = int(round(time.time() * 1000))
 	use_file: bool = None
@@ -162,7 +119,6 @@ if __name__ == "__main__":
 		cipher = read_console()
 	# print(list_to_string(cipher))
 	plaintext: list = solve(cipher, False)
-	print("Plain Text Is: ")
-	print_list(plaintext)
+	print("Plain Text Is: ", plaintext)
 	# print_list(cipher)
-	print("MSecs: ", int(round(time.time() * 1000))-time_before)
+	print("Skewed Due to Sentinel!!!-> MSecs: ", int(round(time.time() * 1000))-time_before)

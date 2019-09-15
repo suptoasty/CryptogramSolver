@@ -10,12 +10,13 @@ from PyQt5.QtWidgets import QWidget, QLabel, QApplication, QVBoxLayout, QHBoxLay
 
 # !!! Im using an old pyqt5 file i used to learn qt5 !!!
 #####
+# base class for a qtApp
 class app(QApplication):
     def __init__(self, args):
         QApplication.__init__(self, args)
         print("Arguments-> ", args)
 
-
+# widgetClass for Window which contains a layout
 class window(QWidget):
     __layout = QVBoxLayout()
 
@@ -29,7 +30,7 @@ class window(QWidget):
     def getLayout():
         return __layout
 
-
+# just a general custom widget....actually contains the layout for everything....pass one of these to a window
 class wid(QWidget):
     __widgets = []
     __layout = QVBoxLayout()
@@ -62,9 +63,10 @@ class wid(QWidget):
 
 
 
-# Driver Below
 cipher: list = None
 plaintext: list = None
+
+# when filedialogue file is chosen
 def open_file(dia: QFileDialog, cipher_text: QTextEdit, plaintext_text: QTextEdit):
 	file = dia.getOpenFileName()
 	cipher = read_text(file[0])
@@ -73,6 +75,7 @@ def open_file(dia: QFileDialog, cipher_text: QTextEdit, plaintext_text: QTextEdi
 	plaintext = solve(text_to_list(cipher_text.toPlainText()), True)
 	plaintext_text.setText(str(plaintext))
 
+# when solve button is hit
 def solve_cipher(cipher_text: QTextEdit, plaintext_text: QTextEdit):
     if cipher_text.toPlainText() is "":
         print("No Text in Cipher object")
@@ -83,7 +86,7 @@ def solve_cipher(cipher_text: QTextEdit, plaintext_text: QTextEdit):
     plaintext_text.setText(str(plaintext))
     return plaintext
 
-
+# ui driver for this script
 if __name__ == "__main__":
 	# get commandline args and create new app
 	m_app = app(sys.argv)
