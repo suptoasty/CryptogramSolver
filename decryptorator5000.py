@@ -6,13 +6,13 @@ import types
 import time
 
 # common lists of word/letter orders in english
-letter_order: list = ['e', 't', 'a', 'i', 'o', 'n', 's', 'h', 'r', 'd', 'l', 'u', 'c', 'm', 'f', 'w', 'y', 'g', 'p', 'b', 'v', 'k', 'q', 'j', 'x', 'z' ]
+common_letter_list: list = ['e', 't', 'a', 'i', 'o', 'n', 's', 'h', 'r', 'd', 'l', 'u', 'c', 'm', 'f', 'w', 'y', 'g', 'p', 'b', 'v', 'k', 'q', 'j', 'x', 'z' ]
 single_letter_words: list = ['a', 'i']
 two_letter_words: list = ['in', 'on', 'an', 'of', 'so', 'or', 'is', 'to', 'go', 'am', 'us', 'me', 'up', 'he', 'we' 'by', 'as', 'at', 'my', 'no']
 diagraph_list_begin: list = ['ch', 'kn', 'ph', 'sh', 'th', 'wh', 'wr'] 
 diagraph_list_end: list = ['ch', 'ck', 'sh', 'ss', 'tch']
 vowel_diagraph_list: list = ['ai', 'ay', 'ee', 'ea', 'ie', 'oa', 'oe', 'ue', 'ui', 'oo']
-word_list: list = ["the", "be", "to", "of", "and", "a", "in", "that", "have", "i", "it", "for", "not", "on", "with", "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "she", "or", "will", "an", "my", "one", "all", "would", "there", "their", "what", "so", "up", "out", "if", "about", "who", "get", "which", "go", "when", "me", "make", "can", "like", "time", "no", "just", "him", "know", "take", "person", "into", "year", "your", "good", "some", "could", "them", "see", "other", "than", "then", "now", "look", "only", "come", "its", "over", "think", "also", "back", "after", "use", "two", "how", "our", "work", "first", "well", "way", "even", "new", "want", "because", "any", "these", "give", "day", "most", "us"]
+common_words_list: list = ["the", "be", "to", "of", "and", "a", "in", "that", "have", "i", "it", "for", "not", "on", "with", "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "she", "or", "will", "an", "my", "one", "all", "would", "there", "their", "what", "so", "up", "out", "if", "about", "who", "get", "which", "go", "when", "me", "make", "can", "like", "time", "no", "just", "him", "know", "take", "person", "into", "year", "your", "good", "some", "could", "them", "see", "other", "than", "then", "now", "look", "only", "come", "its", "over", "think", "also", "back", "after", "use", "two", "how", "our", "work", "first", "well", "way", "even", "new", "want", "because", "any", "these", "give", "day", "most", "us"]
 
 # solves cryptogram taken in as a list of words
 def solve(cipher: list, use_i=False)-> list:
@@ -25,47 +25,51 @@ def solve(cipher: list, use_i=False)-> list:
 	word_freq_list:list = list(word_frequency_table)
 	letter_freq_list:list = list(letter_frequency_table)
 	word_map: dict = {} # dict for storing which letters might be plain text letters
-	
-	# print("Letter Frequency: ", letter_frequency_table)
-	# print("Word Frequency: ", word_frequency_table)
-	# print("Word List: ", word_freq_list)
-	# print("Letter list: ", letter_freq_list)
+	letter_map: dict = {}
 
+	# character: chr
 	# word: str
 	# for word in plaintext:
-	# 	old_word = word
-	# 	if(letter_freq_list[0] in word):
-	# 		word = word.replace(letter_freq_list[0], 'e')
-	# 	if(letter_freq_list[1] in word):
-	# 		word = word.replace(letter_freq_list[1], 't')
-	# 	if(letter_freq_list[2] in word):
-	# 		word = word.replace(letter_freq_list[2], 'a')
-	# 	if(letter_freq_list[3] in word):
-	# 		word = word.replace(letter_freq_list[3], 'i')
-	# 	if(letter_freq_list[4] in word):
-	# 		word = word.replace(letter_freq_list[4], 'o')
-	# 	if(letter_freq_list[5] in word):
-	# 		word = word.replace(letter_freq_list[5], 's')
-	# 	if(letter_freq_list[6] in word):
-	# 		word = word.replace(letter_freq_list[6], 'h')
+	# 	for character in word:
+	# 		old_char = character
+	# 		character = common_letter_list[letter_freq_list.index(character)%26]
+	# 		word = word.replace(old_char, character)
+	# 		if(old_char not in word_map):
+	# 			word_map[old_char] = character
 	# 	partial_text.append(word)
-	# print("Partial text: ", partial_text, len(partial_text))
+	# print(word_map)
+
+	#use letter map to prevent wrong words being chosen
+	for word in plaintext:
+		old_word = word
+		if(old_word not in word_map):
+			new_word = common_words_list[word_freq_list.index(word)%len(common_words_list)]
+			if(len(old_word) is len(new_word)):
+				for i in old_word:
+					if(i not in letter_map and new_word[old_word.index(i)] not in letter_map.values()):
+						letter_map[i] = new_word[old_word.index(i)]
+				partial_text.append(new_word)
+				word_map[old_word] = new_word
 	
 	character: chr
 	word: str
 	for word in plaintext:
+		old_word = word
+		if(word in word_map):
+			continue
+		new_word
 		for character in word:
-			# if(character in letter_freq_list):
-			# 	character = letter_order[letter_freq_list.index(character)]
-			word = word.replace(character, letter_order[letter_freq_list.index(character)])
-		partial_text.append(word)
+			new_word = word.replace(character, common_letter_list[letter_freq_list.index(character)%26])
+		if(len(old_word) is len(new_word)):
+			partial_text.append(word)
+			word_map[old_word] = new_word
+	print(letter_map)
+	print(word_map)
 
-	
+	# letters when looking at word_map can have two mappings, need a way to prevent this to narrow down results
+
 	plaintext = partial_text
 	return plaintext
-
-def get_word_freq_list(list: list)->list:
-	return sorted(list)  
 
 # uses for loop and sorted to order a dictionary by value
 def sort_dictionary_by_value(dictionary: dict)-> dict:
