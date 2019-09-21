@@ -92,17 +92,22 @@ def solve(cipher: list, use_i=False)-> list:
 						used_map = temp[1]
 
 	#look for words that are more than 75% matchin current words
+	used_words:list = []
 	for word in plaintext:
-		used_words = []
+		if(word in used_words):
+			continue
 		for common in common_words_list:
 			if(len(word) is len(common) and common not in used_words):
 				precent = SequenceMatcher(None, common, word).ratio()
-				if(precent >= 0.6 and precent <= 1.0):
+				if(precent >= 0.75):
 					i: int = 0
 					for i in range(len(word)):
 						if(word[i] != common[i] and (word[i] not in letter_map.keys() and common[i] not in letter_map.values())):
 							letter_map[word[i]] = common[i]
 					used_words.append(common)
+					temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+					partial_text = temp[0]
+					used_map = temp[1]
 					print(common)
 	temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
 	partial_text = temp[0]
