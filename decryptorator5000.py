@@ -27,49 +27,36 @@ def solve(cipher: list, use_i=False)-> list:
 	word_map: dict = {} # dict for storing which letters might be plain text letters
 	letter_map: dict = {}
 
-	# character: chr
-	# word: str
-	# for word in plaintext:
-	# 	for character in word:
-	# 		old_char = character
-	# 		character = common_letter_list[letter_freq_list.index(character)%26]
-	# 		word = word.replace(old_char, character)
-	# 		if(old_char not in word_map):
-	# 			word_map[old_char] = character
-	# 	partial_text.append(word)
-	# print(word_map)
+	#two most frequent are likely e then t, set them directly
+	letter_map[letter_freq_list[0]] = 'e'
+	letter_map[letter_freq_list[1]] = 't'
 
-	#use letter map to prevent wrong words being chosen
+	temp:list = update_with_mapping(plaintext, letter_map)
+	plaintext = temp[0]
+	used_map = temp[1]
+
+	#find the word the
+	letter_map['i'] = 'h'
 	for word in plaintext:
-		old_word = word
-		if(old_word not in word_map):
-			new_word = common_words_list[word_freq_list.index(word)%len(common_words_list)]
-			if(len(old_word) is len(new_word)):
-				for i in old_word:
-					if(i not in letter_map and new_word[old_word.index(i)] not in letter_map.values()):
-						letter_map[i] = new_word[old_word.index(i)]
-				partial_text.append(new_word)
-				word_map[old_word] = new_word
-	
-	character: chr
-	word: str
-	for word in plaintext:
-		old_word = word
-		if(word in word_map):
-			continue
-		new_word
-		for character in word:
-			new_word = word.replace(character, common_letter_list[letter_freq_list.index(character)%26])
-		if(len(old_word) is len(new_word)):
-			partial_text.append(word)
-			word_map[old_word] = new_word
-	print(letter_map)
-	print(word_map)
+		pass
+	temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+	plaintext = temp[0]
+	used_map = temp[1]
+	print(used_map)
+	#find double letters
 
-	# letters when looking at word_map can have two mappings, need a way to prevent this to narrow down results
-
-	plaintext = partial_text
 	return plaintext
+
+#replace letters with those in map using in place modification, used_letter_mapping is optional and prevents remapping on second function call
+def update_with_mapping(plaintext: list, letter_mapping: dict, used_letter_mapping=None)-> list:
+	if(used_letter_mapping is not None):
+		for character in letter_mapping.keys():
+			if(character not in used_letter_mapping):
+				plaintext = [item.replace(character, letter_mapping.get(character)) for item in plaintext]
+		return [plaintext, letter_mapping.copy()]
+	for character in letter_mapping.keys():
+		plaintext = [item.replace(character, letter_mapping.get(character)) for item in plaintext]
+	return [plaintext, letter_mapping.copy()]
 
 # uses for loop and sorted to order a dictionary by value
 def sort_dictionary_by_value(dictionary: dict)-> dict:
@@ -156,3 +143,64 @@ if __name__ == "__main__":
 	print("Plain Text Is: ", plaintext)
 	# print_list(cipher)
 	print("Skewed Due to Sentinel!!!-> MSecs: ", int(round(time.time() * 1000))-time_before)
+
+
+
+#use letter map to prevent wrong words being chosen
+	# for word in plaintext:
+	# 	old_word = word
+	# 	if(old_word not in word_map):
+	# 		new_word = common_words_list[word_freq_list.index(word)%len(common_words_list)]
+	# 		#check here to see if letters in word are already mapped???
+	# 		if(len(old_word) is len(new_word)):
+	# 			#add letter mapping to dictionary
+	# 			for i in old_word:
+	# 				if(i not in letter_map and new_word[old_word.index(i)] not in letter_map.values()): #if key doesn't exits and value is not already paired then add pair to dict
+	# 					letter_map[i] = new_word[old_word.index(i)]
+				
+	# 			#add new word to plaintext and dictionary
+	# 			partial_text.append(new_word)
+	# 			word_map[old_word] = new_word
+
+	# for character in str(plaintext):
+	# 	new_char = common_letter_list[letter_freq_list.index(character)%26]
+	# 	if(character not in letter_map):
+	# 		letter_map[character] = new_char
+	# print(letter_map)
+	
+	# #replaces letters in words with mappings
+	# character: chr
+	# word: str
+	# for word in plaintext:
+	# 	old_word = word
+	# 	if(word in word_map):
+	# 		continue
+	# 	new_word
+	# 	for character in word:
+	# 		new_word = word.replace(character, common_letter_list[letter_freq_list.index(character)%26])
+	# 	if(len(old_word) is len(new_word)):
+	# 		partial_text.append(word)
+	# 		word_map[old_word] = new_word
+
+	#fix new_word is only getting one letter changed each iteration
+	# character: chr
+	# word: str
+	# for word in plaintext:
+	# 	old_word: str = word
+	# 	new_word: str = ""
+	# 	for character in old_word:
+	# 		old_char: chr = character
+	# 		new_char: chr = ''
+	# 		if(old_char in letter_map.keys()):
+	# 			new_char = letter_map[character]
+	# 			new_word += new_char
+	# 	# if(new_word not in word_map):
+	# 	if(len(new_word) is len(old_word)):
+	# 		partial_text.append(new_word)
+	# 		word_map[old_word] = new_word
+	# print(letter_map)
+	# print(word_map)
+
+	# letters when looking at word_map can have two mappings, need a way to prevent this to narrow down results
+
+	# plaintext = partial_text
