@@ -51,56 +51,41 @@ def solve(cipher: list, use_i=False)-> list:
 	plaintext = temp[0]
 	used_map = temp[1]
 
-	# find double letters
-	# for word in plaintext:
-	# 	temp = sort_dictionary_by_value(get_frequency_table(word))
-	# 	if(temp.get(word)==2):
-	# 		pass
+	#find what uses these letters as there mappings
 
-	# two letter words
-	# might need to look at neighbors on frequencies for o, s, and a
-	# find way to determin we form be
-	used_letters = []
-	word: str
-	for i in plaintext:
-		for word in plaintext:
-			if(len(word) is 2):
-				if(word[0] in used_letters or word[1] in used_letters):
-					continue
-				if(word[0] in letter_map.values()):
-					if(word[0] is 't'):
-						letter_map[word[1]] = 'o'
-						temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-						plaintext = temp[0]
-						used_map = temp[1]
-						# used_letters.append(word[1])
-					if(word[0] is 'o'):
-						if(word[0] in letter_map.values()):
-							letter = common_letter_list[(letter_freq_list.index(word[1])%27)]
-							letter_map[word[1]] = letter
-							temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-							plaintext = temp[0]
-							used_map = temp[1]
-					# if(word[0] is 's'):
-					# 	letter = common_letter_list[letter_freq_list.index(word[1])%27]
-					# 	letter_map[word[1]] = letter
-					# 	temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-					# 	plaintext = temp[0]
-					# 	used_map = temp[1]
-				elif(word[1] in letter_map.values()):
-					if(word[1] is 'e'):
-						w = 'w'
-						b = 'b'
-						letter_map[word[0]] = 'w'
-						temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-						plaintext = temp[0]
-						used_map = temp[1]
-					# if(word[1] is 't'):
-					# 	letter = common_letter_list[letter_freq_list.index(word[1])%27]
-					# 	letter_map[word[0]] = letter
-					# 	temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-					# 	plaintext = temp[0]
-					# 	used_map = temp[1]
+	#find double letters
+	
+
+	#find two letter words mappings
+	used_words = []
+	sub = get_subset_of_length(plaintext, 2)
+	for word in sub:
+		# if(word in used_words):
+		# 	continue
+		if(word[0] is 't'):
+			letter_map[word[1]] = 'o'
+			temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+			plaintext = temp[0]
+			used_map = temp[1]
+		# elif(word[1] is 'e'):
+		# 	letter_map[word[1]] = 'o'
+		# 	temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+		# 	plaintext = temp[0]
+		# 	used_map = temp[1]
+		elif(word[1] is get_key_by_value(letter_map, 'o')):
+			i = (letter_freq_list.index(word[0])%27)
+			letter_map[word[0]] = common_letter_list[i-1]
+			temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+			plaintext = temp[0]
+			used_map = temp[1]
+		elif(word[0] is get_key_by_value(letter_map, 'o') and word[1] not in letter_map.keys()):
+			i = (letter_freq_list.index(word[1])%27)
+			letter_map[word[1]] = common_letter_list[i-1]
+			temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+			plaintext = temp[0]
+			used_map = temp[1]
+			# used_words.append(word)
+
 
 	#look for words that are more than 75% matchin current words
 	used_words:list = []
@@ -112,7 +97,7 @@ def solve(cipher: list, use_i=False)-> list:
 			if(len(word) is len(common) and common not in used_words):
 				# precent = SequenceMatcher(None, common, word).ratio()
 				percent = compare_words(word, common)
-				if(percent >= 0.60):
+				if(percent >= 0.65):
 					i: int = 0
 					for i in range(len(word)):
 						if(word[i] != common[i] and ((word[i] not in letter_map.keys() and word[i] not in letter_map.values() )and common[i] not in letter_map.values())):
@@ -137,6 +122,26 @@ def solve(cipher: list, use_i=False)-> list:
 	
 
 	return plaintext
+
+def get_key_by_value(dictionary: dict, value):
+	# keys:list = list()
+	key = None
+	items = dictionary.items()
+	for item in items:
+		if(item[1] is value):
+			# keys.append(item[0])
+			key = item[0]
+			break
+	return key
+
+def get_subset_of_length(list: list, size: int)-> list:
+	sub: list = []
+	for i in list:
+		if(i in sub):
+			continue
+		if(len(i) is size):
+			sub.append(i)
+	return sub
 
 def compare_words(word: str, word2: str)-> float:
 	if(len(word) is not len(word2)): return 0.0
