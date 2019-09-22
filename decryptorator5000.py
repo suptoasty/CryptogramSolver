@@ -4,7 +4,6 @@ import re
 import os
 import types
 import time
-from difflib import SequenceMatcher
 
 # common lists of word/letter orders in english
 common_letter_list: list = ['e', 't', 'a', 'i', 'o', 'n', 's', 'h', 'r', 'd', 'l', 'u', 'c', 'm', 'f', 'w', 'y', 'g', 'p', 'b', 'v', 'k', 'q', 'j', 'x', 'z' ]
@@ -18,6 +17,7 @@ common_words_list: list = ['as', 'i', 'his', 'that', 'he', 'was', 'for', 'on', '
 
 # solves cryptogram taken in as a list of words
 def solve(cipher: list, use_i=False)-> list:
+	common_words_list:list = read_text("words.txt")
 	plaintext: list = cipher.copy()
 	partial_text: list = []
 
@@ -41,77 +41,93 @@ def solve(cipher: list, use_i=False)-> list:
 	for word in plaintext:
 		found = False
 		if(not found):
-			precent = SequenceMatcher(None, word, "the").ratio()
-			if(precent >= 0.66):
+			# precent = SequenceMatcher(None, word, "the").ratio()
+			percent = compare_words(word, "the")
+			if(percent >= 0.66):
 				letter_map[word[1]] = 'h'
 				found = True
+				break
 	temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
 	plaintext = temp[0]
 	used_map = temp[1]
 
-	#find double letters
-	for word in plaintext:
-		temp = sort_dictionary_by_value(get_frequency_table(word))
-		pass
+	# find double letters
+	# for word in plaintext:
+	# 	temp = sort_dictionary_by_value(get_frequency_table(word))
+	# 	if(temp.get(word)==2):
+	# 		pass
 
 	# two letter words
 	# might need to look at neighbors on frequencies for o, s, and a
 	# find way to determin we form be
+	used_letters = []
 	word: str
 	for i in plaintext:
 		for word in plaintext:
 			if(len(word) is 2):
+				if(word[0] in used_letters or word[1] in used_letters):
+					continue
 				if(word[0] in letter_map.values()):
 					if(word[0] is 't'):
 						letter_map[word[1]] = 'o'
 						temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
 						plaintext = temp[0]
 						used_map = temp[1]
+						# used_letters.append(word[1])
 					if(word[0] is 'o'):
-						letter_map[word[0]] = common_letter_list[(letter_freq_list.index(word[1])%26)-2]
-						temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-						plaintext = temp[0]
-						used_map = temp[1]
-					if(word[0] is 's'):
-						letter_map[word[0]] = common_letter_list[letter_freq_list.index(word[1])%26]
-						temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-						plaintext = temp[0]
-						used_map = temp[1]
+						if(word[0] in letter_map.values()):
+							letter = common_letter_list[(letter_freq_list.index(word[1])%27)]
+							letter_map[word[1]] = letter
+							temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+							plaintext = temp[0]
+							used_map = temp[1]
+					# if(word[0] is 's'):
+					# 	letter = common_letter_list[letter_freq_list.index(word[1])%27]
+					# 	letter_map[word[1]] = letter
+					# 	temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+					# 	plaintext = temp[0]
+					# 	used_map = temp[1]
 				elif(word[1] in letter_map.values()):
 					if(word[1] is 'e'):
 						w = 'w'
 						b = 'b'
-						letter_map[word[0]] = 'b'
+						letter_map[word[0]] = 'w'
 						temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
 						plaintext = temp[0]
 						used_map = temp[1]
-					if(word[1] is 't'):
-						letter_map[word[0]] = common_letter_list[letter_freq_list.index(word[1])%26]
-						temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-						plaintext = temp[0]
-						used_map = temp[1]
+					# if(word[1] is 't'):
+					# 	letter = common_letter_list[letter_freq_list.index(word[1])%27]
+					# 	letter_map[word[0]] = letter
+					# 	temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+					# 	plaintext = temp[0]
+					# 	used_map = temp[1]
 
 	#look for words that are more than 75% matchin current words
 	used_words:list = []
+	used_letters:list = []
 	for word in plaintext:
 		if(word in used_words):
 			continue
 		for common in common_words_list:
 			if(len(word) is len(common) and common not in used_words):
-				precent = SequenceMatcher(None, common, word).ratio()
-				if(precent >= 0.75):
+				# precent = SequenceMatcher(None, common, word).ratio()
+				percent = compare_words(word, common)
+				if(percent >= 0.60):
 					i: int = 0
 					for i in range(len(word)):
-						if(word[i] != common[i] and (word[i] not in letter_map.keys() and common[i] not in letter_map.values())):
+						if(word[i] != common[i] and ((word[i] not in letter_map.keys() and word[i] not in letter_map.values() )and common[i] not in letter_map.values())):
 							letter_map[word[i]] = common[i]
-					used_words.append(common)
-					temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-					partial_text = temp[0]
-					used_map = temp[1]
-					print(common)
-	temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-	partial_text = temp[0]
-	used_map = temp[1]
+							used_words.append(common)
+							used_words.append(word)
+	# letter_map['y'] = 'f'
+							temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+							plaintext = temp[0]
+							used_map = temp[1]
+					# print(common)
+	# temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+	# plaintext = temp[0]
+	# used_map = temp[1]
+
 	
 	print(letter_map)
 	print(len(letter_map.keys()))
@@ -122,16 +138,25 @@ def solve(cipher: list, use_i=False)-> list:
 
 	return plaintext
 
+def compare_words(word: str, word2: str)-> float:
+	if(len(word) is not len(word2)): return 0.0
+	sim: float = 0.0
+	for i in range(len(word)):
+		if(word[i] is word2[i]):
+			sim += 1.0
+	return sim / len(word)
+
 #replace letters with those in map using in place modification, used_letter_mapping is optional and prevents remapping on second function call
 def update_with_mapping(plaintext: list, letter_mapping: dict, used_letter_mapping=None)-> list:
 	if(used_letter_mapping is not None):
 		for character in letter_mapping.keys():
-			if(character not in used_letter_mapping):
+			if(character not in used_letter_mapping.keys()):
 				plaintext = [item.replace(character, letter_mapping.get(character)) for item in plaintext]
-		return [plaintext, letter_mapping.copy()]
+				used_letter_mapping[character] = letter_mapping.get(character)
+		return [plaintext.copy(), used_letter_mapping.copy()]
 	for character in letter_mapping.keys():
 		plaintext = [item.replace(character, letter_mapping.get(character)) for item in plaintext]
-	return [plaintext, letter_mapping.copy()]
+	return [plaintext.copy(), letter_mapping.copy()]
 
 # uses for loop and sorted to order a dictionary by value
 def sort_dictionary_by_value(dictionary: dict)-> dict:
