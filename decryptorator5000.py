@@ -17,7 +17,7 @@ common_words_list: list = ['as', 'i', 'his', 'that', 'he', 'was', 'for', 'on', '
 
 # solves cryptogram taken in as a list of words
 def solve(cipher: list, use_i=False)-> list:
-	common_words_list:list = read_text("words.txt")
+	# common_words_list:list = read_text("words.txt")
 	plaintext: list = cipher.copy()
 	partial_text: list = []
 
@@ -29,8 +29,25 @@ def solve(cipher: list, use_i=False)-> list:
 	word_map: dict = {} # dict for storing which letters might be plain text letters
 	letter_map: dict = {}
 
+	# used_words = []
+
+	# #find double letters
+	# has_double_letters = []
+	# for word in plaintext:
+	# 	for i in range(1, len(word)):
+	# 		if(word[i] == word[i-1]):
+	# 			has_double_letters.append(word)
+	# 			letter_map[word[i]] = common_letter_list[letter_frequency_table.get(word[i])]
+	# 			temp:list = update_with_mapping(plaintext, letter_map)
+	# 			plaintext = temp[0]
+	# 			used_map = temp[1]
+
 	#two most frequent are likely e then t, set them directly
 	letter_map[letter_freq_list[0]] = 'e'
+	temp:list = update_with_mapping(plaintext, letter_map)
+	plaintext = temp[0]
+	used_map = temp[1]
+
 	letter_map[letter_freq_list[1]] = 't'
 
 	temp:list = update_with_mapping(plaintext, letter_map)
@@ -46,15 +63,18 @@ def solve(cipher: list, use_i=False)-> list:
 			if(percent >= 0.66):
 				letter_map[word[1]] = 'h'
 				found = True
+				temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+				plaintext = temp[0]
+				used_map = temp[1]
 				break
-	temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-	plaintext = temp[0]
-	used_map = temp[1]
 
-	#find what uses these letters as there mappings
+	letter_frequency_table = sort_dictionary_by_value(get_frequency_table(list_to_string(plaintext)))
+	letter_freq_list = list(letter_frequency_table)
+	# #find what uses these letters as there mappings
+	# letter_map['e'] = letter_freq_list[]
+	# letter_map['t']
 
-	#find double letters
-	
+
 
 	#find two letter words mappings
 	used_words = []
@@ -97,7 +117,7 @@ def solve(cipher: list, use_i=False)-> list:
 			if(len(word) is len(common) and common not in used_words):
 				# precent = SequenceMatcher(None, common, word).ratio()
 				percent = compare_words(word, common)
-				if(percent >= 0.65):
+				if(percent >= 0.6):
 					i: int = 0
 					for i in range(len(word)):
 						if(word[i] != common[i] and ((word[i] not in letter_map.keys() and word[i] not in letter_map.values() )and common[i] not in letter_map.values())):
@@ -116,10 +136,29 @@ def solve(cipher: list, use_i=False)-> list:
 	
 	print(letter_map)
 	print(len(letter_map.keys()))
-	
-	#use word list to remapp letters that may have been changed 
-	#	might preemptively remap these to special character?
-	
+
+
+	pt = cipher.copy()
+	temp = update_with_mapping(pt, letter_map)
+	pt = temp[0]
+	print(pt)
+	used_words:list = ['the']
+	used_letters:list = []
+	for word in pt:
+		if(word in used_words):
+			continue
+		old_word = word
+		new_word = old_word
+		for common in common_words_list:
+			if(len(word) is len(common) and common not in used_words):
+				# precent = SequenceMatcher(None, common, word).ratio()
+				percent = compare_words(word, common)
+				if(percent >= 0.6):
+					new_word = common
+					used_words.append(common)
+		pt[pt.index(old_word)] = new_word
+
+	plaintext = pt
 
 	return plaintext
 
