@@ -31,16 +31,16 @@ def solve(cipher: list, use_i=False)-> list:
 
 	# used_words = []
 
-	# #find double letters
-	# has_double_letters = []
-	# for word in plaintext:
-	# 	for i in range(1, len(word)):
-	# 		if(word[i] == word[i-1]):
-	# 			has_double_letters.append(word)
-	# 			letter_map[word[i]] = common_letter_list[letter_frequency_table.get(word[i])]
-	# 			temp:list = update_with_mapping(plaintext, letter_map)
-	# 			plaintext = temp[0]
-	# 			used_map = temp[1]
+	#find double letters
+	has_double_letters = []
+	for word in plaintext:
+		for i in range(1, len(word)):
+			if(word[i] == word[i-1]):
+				has_double_letters.append(word)
+				letter_map[word[i]] = common_letter_list[letter_frequency_table.get(word[i])]
+				temp:list = update_with_mapping(plaintext, letter_map)
+				plaintext = temp[0]
+				used_map = temp[1]
 
 	#two most frequent are likely e then t, set them directly
 	letter_map[letter_freq_list[0]] = 'e'
@@ -100,7 +100,7 @@ def solve(cipher: list, use_i=False)-> list:
 			used_map = temp[1]
 		elif(word[0] is get_key_by_value(letter_map, 'o') and word[1] not in letter_map.keys()):
 			i = (letter_freq_list.index(word[1])%27)
-			letter_map[word[1]] = common_letter_list[i-1]
+			letter_map[word[1]] = common_letter_list[i]
 			temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
 			plaintext = temp[0]
 			used_map = temp[1]
@@ -142,7 +142,7 @@ def solve(cipher: list, use_i=False)-> list:
 	temp = update_with_mapping(pt, letter_map)
 	pt = temp[0]
 	print(pt)
-	used_words:list = ['the']
+	used_words:list = common_words_list
 	used_letters:list = []
 	for word in pt:
 		if(word in used_words):
