@@ -142,9 +142,15 @@ def solve(cipher: list, use_i=False)-> list:
 	temp = update_with_mapping(pt, letter_map)
 	pt = temp[0]
 	print(pt)
-	used_words:list = common_words_list
+	# used_words:list = ["the"]
+	used_words:list = []
+	for word in plaintext:
+		if(word in common_words_list):
+			used_words.append(word)
 	used_letters:list = []
 	for word in pt:
+		if(word in common_words_list):
+			used_words.append(word)
 		if(word in used_words):
 			continue
 		old_word = word
