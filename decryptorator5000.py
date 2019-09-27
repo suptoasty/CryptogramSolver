@@ -122,30 +122,34 @@ def solve(cipher: list, letter_mapping:dict = None)-> list:
 	for word in sub:
 		# if(word in used_words):
 		# 	continue
-		if(word[0] is 't'):
-			letter_map[word[1]] = 'o'
-			temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-			plaintext = temp[0]
-			used_map = temp[1]
-		# elif(word[1] is 'e'):
-		# 	letter_map[word[1]] = 'o'
-		# 	temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-		# 	plaintext = temp[0]
-		# 	used_map = temp[1]
-		elif(word[1] is get_key_by_value(letter_map, 'o')):
-			i = (letter_freq_list.index(word[0])%27)
-			letter_map[word[0]] = common_letter_list[i-1]
-			temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-			plaintext = temp[0]
-			used_map = temp[1]
-		elif(word[0] is get_key_by_value(letter_map, 'o') and word[1] not in letter_map.keys()):
-			i = (letter_freq_list.index(word[1])%27)
-			letter_map[word[1]] = common_letter_list[i]
-			temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-			plaintext = temp[0]
-			used_map = temp[1]
-			# used_words.append(word)
-
+		if(word[0] in letter_map.values()):
+			if(word[0] is 't'):
+				letter_map[word[1]] = 'o'
+				temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+				plaintext = temp[0]
+				used_map = temp[1]
+			# elif(word[1] is 'e'):
+			# 	letter_map[word[1]] = 'o'
+			# 	temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+			# 	plaintext = temp[0]
+			# 	used_map = temp[1]
+			elif(word[1] is get_key_by_value(letter_map, 'o')):
+				i = (letter_freq_list.index(word[0])%27)
+				letter_map[word[0]] = common_letter_list[i-1]
+				temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+				plaintext = temp[0]
+				used_map = temp[1]
+			elif(word[0] is get_key_by_value(letter_map, 'o') and word[1] not in letter_map.keys()):
+				i = (letter_freq_list.index(word[1])%27)
+				letter_map[word[1]] = common_letter_list[i]
+				temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+				plaintext = temp[0]
+				used_map = temp[1]
+			elif(word[1] is 'o' and 's' in letter_map.values() and 'n' in letter_map.values() and 'd' in letter_map.values() and 'g' in letter_map.values()):
+				letter_map[word[0]] = 't'
+				temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+				plaintext = temp[0]
+				used_map = temp[1]
 
 	#look for words that are more than 75% matchin current words
 	used_words:list = []
