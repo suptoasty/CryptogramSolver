@@ -154,6 +154,7 @@ def solve(cipher: list, letter_mapping:dict = None)-> list:
 				temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
 				plaintext = temp[0]
 				used_map = temp[1]
+				
 
 	#look for words that are more than 75% matchin current words
 	used_words:list = []
