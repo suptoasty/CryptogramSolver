@@ -65,15 +65,18 @@ class wid(QWidget):
 
 cipher: list = None
 plaintext: list = None
+letter_map: dict = None
 
 # when filedialogue file is chosen
 def open_file(dia: QFileDialog, cipher_text: QTextEdit, plaintext_text: QTextEdit):
-	file = dia.getOpenFileName()
-	cipher = read_text(file[0])
-	cipher_text.setText(read_plain_text(file[0]))
-
-	plaintext = solve(text_to_list(cipher_text.toPlainText()), True)
-	plaintext_text.setText(str(plaintext))
+    file = dia.getOpenFileName()
+    cipher = read_text(file[0])
+    cipher_text.setText(read_plain_text(file[0]))
+    
+    temp = solve(text_to_list(cipher_text.toPlainText()))
+    plaintext = temp[0].copy()
+    letter_map = temp[1].copy()
+    plaintext_text.setText(str(plaintext))
 
 # when solve button is hit
 def solve_cipher(cipher_text: QTextEdit, plaintext_text: QTextEdit):
@@ -81,8 +84,12 @@ def solve_cipher(cipher_text: QTextEdit, plaintext_text: QTextEdit):
         print("No Text in Cipher object")
         sys.exit(1)
         return
+    # if(not (plaintext_text.toPlainText() is "")):
+    #     cipher_text.setText(list_to_string(plaintext_text.toPlainText()))
 
-    plaintext = solve(text_to_list(cipher_text.toPlainText()), True)
+    temp = solve(text_to_list(cipher_text.toPlainText()))
+    plaintext = temp[0].copy()
+    letter_map = temp[1].copy()
     plaintext_text.setText(str(plaintext))
     return plaintext
 

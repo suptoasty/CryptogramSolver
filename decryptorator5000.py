@@ -4,10 +4,11 @@ import re
 import os
 import types
 import time
+# import nltk
 
 # common lists of word/letter orders in english
 common_letter_list: list = ['e', 't', 'a', 'i', 'o', 'n', 's', 'h', 'r', 'd', 'l', 'u', 'c', 'm', 'f', 'w', 'y', 'g', 'p', 'b', 'v', 'k', 'q', 'j', 'x', 'z' ]
-single_letter_words: list = ['a', 'i']
+# single_letter_words: list = ['a', 'i']
 two_letter_words: list = ['in', 'on', 'an', 'of', 'so', 'or', 'is', 'to', 'go', 'am', 'us', 'me', 'up', 'he', 'we' 'by', 'as', 'at', 'my', 'no']
 diagraph_list_begin: list = ['ch', 'kn', 'ph', 'sh', 'th', 'wh', 'wr'] 
 diagraph_list_end: list = ['ch', 'ck', 'sh', 'ss', 'tch']
@@ -16,20 +17,33 @@ vowel_diagraph_list: list = ['ai', 'ay', 'ee', 'ea', 'ie', 'oa', 'oe', 'ue', 'ui
 common_words_list: list = ['as', 'i', 'his', 'that', 'he', 'was', 'for', 'on', 'are', 'with', 'they', 'be', 'at', 'one', 'have', 'this', 'from', 'by', 'hot', 'word', 'but', 'what', 'some', 'is', 'it', 'you', 'or', 'had', 'the', 'of', 'to', 'and', 'a', 'in', 'we', 'can', 'out', 'other', 'were', 'which', 'do', 'their', 'time', 'if', 'will', 'how', 'said', 'an', 'each', 'tell', 'does', 'set', 'three', 'want', 'air', 'well', 'also', 'play', 'small', 'end', 'put', 'home', 'read', 'hand', 'port', 'large', 'spell', 'add', 'even', 'land', 'here', 'must', 'big', 'high', 'such', 'follow', 'act', 'why', 'ask', 'men', 'change', 'went', 'light', 'kind', 'off', 'need', 'house', 'picture', 'try', 'us', 'again', 'animal', 'point', 'mother', 'world', 'near', 'build', 'self', 'earth', 'father', 'any', 'new', 'work', 'part', 'take', 'get', 'place', 'made', 'live', 'where', 'after', 'back', 'little', 'only', 'round', 'man', 'year', 'came', 'show', 'every', 'good', 'me', 'give', 'our', 'under', 'name', 'very', 'through', 'just', 'form', 'sentence', 'great', 'think', 'say', 'help', 'low', 'line', 'differ', 'turn', 'cause', 'much', 'mean', 'before', 'move', 'right', 'boy', 'old', 'too', 'same', 'she', 'all', 'there', 'when', 'up', 'use', 'your', 'way', 'about', 'many', 'then', 'them', 'write', 'would', 'like', 'so', 'these', 'her', 'long', 'make', 'thing', 'see', 'him', 'two', 'has', 'look', 'more', 'day', 'could', 'go', 'come', 'did', 'number', 'sound', 'no', 'most', 'people', 'my', 'over', 'know', 'water', 'than', 'call', 'first', 'who', 'may', 'down', 'side', 'been', 'now', 'find', 'head', 'stand', 'own', 'page', 'should', 'country', 'found', 'answer', 'school', 'grow', 'study', 'still', 'learn', 'plant', 'cover', 'food', 'sun', 'four', 'between', 'state', 'keep', 'eye', 'never', 'last', 'let', 'thought', 'city', 'tree', 'cross', 'farm', 'hard', 'start', 'might', 'story', 'saw', 'far', 'sea', 'draw', 'left', 'late', 'run', 'dont', 'while', 'press', 'close', 'night', 'real', 'life', 'few', 'north', 'book', 'carry', 'took', 'science', 'eat', 'room', 'friend', 'began', 'idea', 'fish', 'mountain', 'stop', 'once', 'base', 'hear', 'horse', 'cut', 'sure', 'watch', 'color', 'face', 'wood', 'main', 'open', 'seem', 'together', 'next', 'white', 'children', 'begin', 'got', 'walk', 'example', 'ease', 'paper', 'group', 'always', 'music', 'those', 'both', 'mark', 'often', 'letter', 'until', 'mile', 'river', 'car', 'feet', 'care', 'second', 'enough', 'plain', 'girl', 'usual', 'young', 'ready', 'above', 'ever', 'red', 'list', 'though', 'feel', 'talk', 'bird', 'soon', 'body', 'dog', 'family', 'direct', 'pose', 'leave', 'song', 'measure', 'door', 'product', 'black', 'short', 'numeral', 'class', 'wind', 'question', 'happen', 'complete', 'ship', 'area', 'half', 'rock', 'order', 'fire', 'south', 'problem', 'piece', 'told', 'knew', 'pass', 'since', 'top', 'whole', 'king', 'street', 'inch', 'multiply', 'nothing', 'course', 'stay', 'wheel', 'full', 'force', 'blue', 'object', 'decide', 'surface', 'deep', 'moon', 'island', 'foot', 'system', 'busy', 'test', 'record', 'boat', 'common', 'gold', 'possible', 'plane', 'stead', 'dry', 'wonder', 'laugh', 'thousand', 'ago', 'ran', 'check', 'game', 'shape', 'equate', 'hot', 'miss', 'brought', 'heat', 'snow', 'tire', 'bring', 'yes', 'distant', 'fill', 'east', 'paint', 'language', 'among', 'unit', 'power', 'town', 'fine', 'certain', 'fly', 'fall', 'lead', 'cry', 'dark', 'machine', 'note', 'wait', 'plan', 'figure', 'star', 'box', 'noun', 'field', 'rest', 'correct', 'able', 'pound', 'done', 'beauty', 'drive', 'stood', 'contain', 'front', 'teach', 'week', 'final', 'gave', 'green', 'oh', 'quick', 'develop', 'ocean', 'warm', 'free', 'minute', 'strong', 'special', 'mind', 'behind', 'clear', 'tail', 'produce', 'fact', 'space', 'heard', 'best', 'hour', 'better', 'true', 'during', 'hundred', 'five', 'remember', 'step', 'early', 'hold', 'west', 'ground', 'interest', 'reach', 'fast', 'verb', 'sing', 'listen', 'six', 'table', 'travel', 'less', 'morning', 'ten', 'simple', 'several', 'vowel', 'toward', 'war', 'lay', 'against', 'pattern', 'slow', 'center', 'love', 'person', 'money', 'serve', 'appear', 'road', 'map', 'rain', 'rule', 'govern', 'pull', 'cold', 'notice', 'voice', 'energy', 'hunt', 'probable', 'bed', 'brother', 'egg', 'ride', 'cell', 'believe', 'perhaps', 'pick', 'sudden', 'count', 'square', 'reason', 'length', 'represent', 'art', 'subject', 'region', 'size', 'vary', 'settle', 'speak', 'weight', 'general', 'ice', 'matter', 'circle', 'pair', 'include', 'divide', 'syllable', 'felt', 'grand', 'ball', 'yet', 'wave', 'drop', 'heart', 'am', 'present', 'heavy', 'dance', 'engine', 'position', 'arm', 'wide', 'sail', 'material', 'fraction', 'forest', 'sit', 'race', 'window', 'store', 'summer', 'train', 'sleep', 'prove', 'lone', 'leg', 'exercise', 'wall', 'catch', 'mount', 'wish', 'sky', 'board', 'joy', 'winter', 'sat', 'written', 'wild', 'instrument', 'kept', 'glass', 'grass', 'cow', 'job', 'edge', 'sign', 'visit', 'past', 'soft', 'fun', 'bright', 'gas', 'weather', 'month', 'million', 'bear', 'finish', 'happy', 'hope', 'flower', 'clothe', 'strange', 'gone', 'trade', 'melody', 'trip', 'office', 'receive', 'row', 'mouth', 'exact', 'symbol', 'die', 'least', 'trouble', 'shout', 'except', 'wrote', 'seed', 'tone', 'join', 'suggest', 'clean', 'break', 'lady', 'yard', 'rise', 'bad', 'blow', 'oil', 'blood', 'touch', 'grew', 'cent', 'mix', 'team', 'wire', 'cost', 'lost', 'brown', 'wear', 'garden', 'equal', 'sent', 'choose', 'fell', 'fit', 'flow', 'fair', 'bank', 'collect', 'save', 'control', 'decimal', 'ear', 'else', 'quite', 'broke', 'case', 'middle', 'kill', 'son', 'lake', 'moment', 'scale', 'loud', 'spring', 'observe', 'child', 'straight', 'consonant', 'nation', 'dictionary', 'milk', 'speed', 'method', 'organ', 'pay', 'age', 'section', 'dress', 'cloud', 'surprise', 'quiet', 'stone', 'tiny', 'climb', 'cool', 'design', 'poor', 'lot', 'experiment', 'bottom', 'key', 'iron', 'single', 'stick', 'flat', 'twenty', 'skin', 'smile', 'crease', 'hole', 'jump', 'baby', 'eight', 'village', 'meet', 'root', 'buy', 'raise', 'solve', 'metal', 'whether', 'push', 'seven', 'paragraph', 'third', 'shall', 'held', 'hair', 'describe', 'cook', 'floor', 'either', 'result', 'burn', 'hill', 'safe', 'cat', 'century', 'consider', 'type', 'law', 'bit', 'coast', 'copy', 'phrase', 'silent', 'tall', 'sand', 'soil', 'roll', 'temperature', 'finger', 'industry', 'value', 'fight', 'lie', 'beat', 'excite', 'natural', 'view', 'sense', 'capital', 'wont', 'chair', 'danger', 'fruit', 'rich', 'thick', 'soldier', 'process', 'operate', 'practice', 'separate', 'difficult', 'doctor', 'please', 'protect', 'noon', 'crop', 'modern', 'element', 'hit', 'student', 'corner', 'party', 'supply', 'whose', 'locate', 'ring', 'character', 'insect', 'caught', 'period', 'indicate', 'radio', 'spoke', 'atom', 'human', 'history', 'effect', 'electric', 'expect', 'bone', 'rail', 'imagine', 'provide', 'agree', 'thus', 'gentle', 'woman', 'captain', 'guess', 'necessary', 'sharp', 'wing', 'create', 'neighbor', 'wash', 'bat', 'rather', 'crowd', 'corn', 'compare', 'poem', 'string', 'bell', 'depend', 'meat', 'rub', 'tube', 'famous', 'dollar', 'stream', 'fear', 'sight', 'thin', 'triangle', 'planet', 'hurry', 'chief', 'colony', 'clock', 'mine', 'tie', 'enter', 'major', 'fresh', 'search', 'send', 'yellow', 'gun', 'allow', 'print', 'dead', 'spot', 'desert', 'suit', 'current', 'lift', 'rose', 'arrive', 'master', 'track', 'parent', 'shore', 'division', 'sheet', 'substance', 'favor', 'connect', 'post', 'spend', 'chord', 'fat', 'glad', 'original', 'share', 'station', 'dad', 'bread', 'charge', 'proper', 'bar', 'offer', 'segment', 'slave', 'duck', 'instant', 'market', 'degree', 'populate', 'chick', 'dear', 'enemy', 'reply', 'drink', 'occur', 'support', 'speech', 'nature', 'range', 'steam', 'motion', 'path', 'liquid', 'log', 'meant', 'quotient', 'teeth', 'shell', 'neck', 'oxygen', 'sugar', 'death', 'pretty', 'skill', 'women', 'season', 'solution', 'magnet', 'silver', 'thank', 'branch', 'match', 'suffix', 'especially', 'fig', 'afraid', 'huge', 'sister', 'steel', 'discuss', 'forward', 'similar', 'guide', 'experience', 'score', 'apple', 'bought', 'led', 'pitch', 'coat', 'mass', 'card', 'band', 'rope', 'slip', 'win', 'dream', 'evening', 'condition', 'feed', 'tool', 'total', 'basic', 'smell', 'valley', 'nor', 'double', 'seat', 'continue', 'block', 'chart', 'hat', 'sell', 'success', 'company', 'subtract', 'event', 'particular', 'deal', 'swim', 'term', 'opposite', 'wife', 'shoe', 'shoulder', 'spread', 'arrange', 'camp', 'invent', 'cotton', 'born', 'determine', 'quart', 'nine', 'truck', 'noise', 'level', 'chance', 'gather', 'shop', 'stretch', 'throw', 'shine', 'property', 'column', 'molecule', 'select', 'wrong', 'gray', 'repeat', 'require', 'broad', 'prepare', 'salt', 'nose', 'plural', 'anger', 'claim', 'continent']
 
 # solves cryptogram taken in as a list of words
-def solve(cipher: list, use_i=False)-> list:
+def solve(cipher: list, letter_mapping:dict = None)-> list:
 	# common_words_list:list = read_text("words.txt")
+	# nltk.download_shell()
 	plaintext: list = cipher.copy()
 	partial_text: list = []
 
 	# dictionary makes it easy to index using current character
+	letter_map: dict = {}
+	if(not (letter_mapping is None)):
+		letter_map = letter_mapping
 	word_frequency_table:dict = sort_dictionary_by_value(get_frequency_table(plaintext))
 	letter_frequency_table: dict = sort_dictionary_by_value(get_frequency_table(list_to_string(plaintext)))
 	word_freq_list:list = list(word_frequency_table)
 	letter_freq_list:list = list(letter_frequency_table)
 	word_map: dict = {} # dict for storing which letters might be plain text letters
-	letter_map: dict = {}
 
-	# used_words = []
+	used_words = []
+	temp_letter_mapping: dict = {} #need to implement a map that can help me find starting letters so i don't have to hard code and rely on the word "the"
+							 #should give only valid mappings for small words to the actual letter_map variable so, used letter map is not set to every character
+	# for character in list_to_string(plaintext):
+	# 	if(character not in temp_letter_mapping.keys()):
+	# 		if(common_letter_list[letter_frequency_table.get(character)] in temp_letter_mapping.values()):
+	# 			temp_letter_mapping[character] = common_letter_list[letter_frequency_table.get(character)-1%27]
+	# 		else:
+	# 			temp_letter_mapping[character] = common_letter_list[letter_frequency_table.get(character)%27]
+	# temp_plain_text = plaintext.copy()
+	# print(update_with_mapping(temp_plain_text, temp_letter_mapping))
 
 	#find double letters
 	has_double_letters = []
@@ -41,8 +55,28 @@ def solve(cipher: list, use_i=False)-> list:
 				temp:list = update_with_mapping(plaintext, letter_map)
 				plaintext = temp[0]
 				used_map = temp[1]
+	
+	single_letter_words = []
+	for word in plaintext:
+		if(len(word) is 1):
+			if(word in single_letter_words):
+				continue
+			single_letter_words.append(word)
+			letter_map[word] = common_letter_list[letter_frequency_table.get(word)]
+	character = ''
+	i: int = 0
+	for i in range(1, len(single_letter_words)):
+		word = single_letter_words[i]	
+		previous = single_letter_words[i-1]	
+		if(letter_frequency_table.get(word)>letter_frequency_table.get(previous)):
+			character = word
+	if(character is not ''):
+		letter_map[character] = common_letter_list[common_letter_list.index(character)]
+		temp:list = update_with_mapping(plaintext, letter_map)
+		plaintext = temp[0]
+		used_map = temp[1]
 
-	#two most frequent are likely e then t, set them directly
+	# two most frequent are likely e then t, set them directly
 	letter_map[letter_freq_list[0]] = 'e'
 	temp:list = update_with_mapping(plaintext, letter_map)
 	plaintext = temp[0]
@@ -58,15 +92,21 @@ def solve(cipher: list, use_i=False)-> list:
 	for word in plaintext:
 		found = False
 		if(not found):
-			# precent = SequenceMatcher(None, word, "the").ratio()
-			percent = compare_words(word, "the")
-			if(percent >= 0.66):
-				letter_map[word[1]] = 'h'
-				found = True
-				temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
-				plaintext = temp[0]
-				used_map = temp[1]
-				break
+			if(len(word) != 3):
+				continue
+			for common in common_words_list:
+				# precent = SequenceMatcher(None, word, "the").ratio()
+				percent = compare_words(word, common)
+				if(percent >= 0.66):
+					i = 0
+					for i in range(len(word)):
+						if(word[i] != common[i] and word[i] not in letter_map):
+							letter_map[word[1]] = common[i]
+							found = True
+							temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+							plaintext = temp[0]
+							used_map = temp[1]
+							break
 
 	letter_frequency_table = sort_dictionary_by_value(get_frequency_table(list_to_string(plaintext)))
 	letter_freq_list = list(letter_frequency_table)
@@ -166,7 +206,20 @@ def solve(cipher: list, use_i=False)-> list:
 
 	plaintext = pt
 
-	return plaintext
+	# print("Is close to actual plaintext: ", validate_plaintext(plaintext, letter_map))
+
+	return [plaintext, letter_map]
+
+def validate_plaintext(plaintext: list, letter_mapping: dict = None)-> bool:
+	word_count = len(plaintext)
+	summation: int = 0
+	for word in plaintext:
+		if(word in common_words_list):
+			summation += 1
+	if(summation/word_count >= 0.75):
+		return True
+	else:
+		return False
 
 def get_key_by_value(dictionary: dict, value):
 	# keys:list = list()
@@ -288,69 +341,12 @@ if __name__ == "__main__":
 				print("Invlaid File Path Try Again: ")
 	else:
 		cipher = read_console()
-	# print(list_to_string(cipher))
-	plaintext: list = solve(cipher, False)
+
+	temp = solve(cipher)
+	plaintext: list = temp[0].copy()
+	letter_map: dict = temp[1].copy()
+	# while(not validate_plaintext(plaintext, letter_map)):
+	#  	plaintext = solve(plaintext.copy())
+
 	print("Plain Text Is: ", plaintext)
-	# print_list(cipher)
 	print("Skewed Due to Sentinel!!!-> MSecs: ", int(round(time.time() * 1000))-time_before)
-
-
-
-#use letter map to prevent wrong words being chosen
-	# for word in plaintext:
-	# 	old_word = word
-	# 	if(old_word not in word_map):
-	# 		new_word = common_words_list[word_freq_list.index(word)%len(common_words_list)]
-	# 		#check here to see if letters in word are already mapped???
-	# 		if(len(old_word) is len(new_word)):
-	# 			#add letter mapping to dictionary
-	# 			for i in old_word:
-	# 				if(i not in letter_map and new_word[old_word.index(i)] not in letter_map.values()): #if key doesn't exits and value is not already paired then add pair to dict
-	# 					letter_map[i] = new_word[old_word.index(i)]
-				
-	# 			#add new word to plaintext and dictionary
-	# 			partial_text.append(new_word)
-	# 			word_map[old_word] = new_word
-
-	# for character in str(plaintext):
-	# 	new_char = common_letter_list[letter_freq_list.index(character)%26]
-	# 	if(character not in letter_map):
-	# 		letter_map[character] = new_char
-	# print(letter_map)
-	
-	# #replaces letters in words with mappings
-	# character: chr
-	# word: str
-	# for word in plaintext:
-	# 	old_word = word
-	# 	if(word in word_map):
-	# 		continue
-	# 	new_word
-	# 	for character in word:
-	# 		new_word = word.replace(character, common_letter_list[letter_freq_list.index(character)%26])
-	# 	if(len(old_word) is len(new_word)):
-	# 		partial_text.append(word)
-	# 		word_map[old_word] = new_word
-
-	#fix new_word is only getting one letter changed each iteration
-	# character: chr
-	# word: str
-	# for word in plaintext:
-	# 	old_word: str = word
-	# 	new_word: str = ""
-	# 	for character in old_word:
-	# 		old_char: chr = character
-	# 		new_char: chr = ''
-	# 		if(old_char in letter_map.keys()):
-	# 			new_char = letter_map[character]
-	# 			new_word += new_char
-	# 	# if(new_word not in word_map):
-	# 	if(len(new_word) is len(old_word)):
-	# 		partial_text.append(new_word)
-	# 		word_map[old_word] = new_word
-	# print(letter_map)
-	# print(word_map)
-
-	# letters when looking at word_map can have two mappings, need a way to prevent this to narrow down results
-
-	# plaintext = partial_text
