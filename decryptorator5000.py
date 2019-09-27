@@ -45,6 +45,10 @@ def solve(cipher: list, letter_mapping:dict = None)-> list:
 	# temp_plain_text = plaintext.copy()
 	# print(update_with_mapping(temp_plain_text, temp_letter_mapping))
 
+	#check for diagraphs
+	# for word in plaintext:
+	# 	pass
+
 	#find double letters
 	has_double_letters = []
 	for word in plaintext:
@@ -52,9 +56,9 @@ def solve(cipher: list, letter_mapping:dict = None)-> list:
 			if(word[i] == word[i-1]):
 				has_double_letters.append(word)
 				letter_map[word[i]] = common_letter_list[letter_frequency_table.get(word[i])]
-				temp:list = update_with_mapping(plaintext, letter_map)
-				plaintext = temp[0]
-				used_map = temp[1]
+				# temp:list = update_with_mapping(plaintext, letter_map)
+				# plaintext = temp[0]
+				# used_map = temp[1]
 	
 	single_letter_words = []
 	for word in plaintext:
@@ -62,7 +66,7 @@ def solve(cipher: list, letter_mapping:dict = None)-> list:
 			if(word in single_letter_words):
 				continue
 			single_letter_words.append(word)
-			letter_map[word] = common_letter_list[letter_frequency_table.get(word)]
+			# letter_map[word] = common_letter_list[letter_frequency_table.get(word)]
 	character = ''
 	i: int = 0
 	for i in range(1, len(single_letter_words)):
@@ -72,9 +76,9 @@ def solve(cipher: list, letter_mapping:dict = None)-> list:
 			character = word
 	if(character is not ''):
 		letter_map[character] = common_letter_list[common_letter_list.index(character)]
-		temp:list = update_with_mapping(plaintext, letter_map)
-		plaintext = temp[0]
-		used_map = temp[1]
+		# temp:list = update_with_mapping(plaintext, letter_map)
+		# plaintext = temp[0]
+		# used_map = temp[1]
 
 	# two most frequent are likely e then t, set them directly
 	letter_map[letter_freq_list[0]] = 'e'
@@ -210,6 +214,20 @@ def solve(cipher: list, letter_mapping:dict = None)-> list:
 
 	plaintext = pt
 
+	# last minute trys
+	letter_frequency_table: dict = sort_dictionary_by_value(get_frequency_table(list_to_string(plaintext)))
+	word: str
+	for word in plaintext:
+		i = 0
+		for i in range(len(word)):
+			if(word[i] not in letter_map.keys() and (word[i] not in letter_map.values())):
+				character = common_letter_list[letter_frequency_table.get(word[i])]
+				new_word = word.replace(word[i], character)
+				if(new_word in common_words_list and character not in letter_map.values()):
+					letter_map[word[i]] = character
+					temp = update_with_mapping(plaintext, letter_map, used_letter_mapping=used_map)
+					plaintext = temp[0]
+					used_map = temp[1]
 	# print("Is close to actual plaintext: ", validate_plaintext(plaintext, letter_map))
 
 	return [plaintext, letter_map]
