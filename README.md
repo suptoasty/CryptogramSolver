@@ -8,3 +8,4 @@
 # Using the application ui
 * you can either use a string in the ui text edit box or you can create a text document and use choose file to load cipher as a list
 * after entering a string directly hit solve, loading a text file will do this for you
+* current version is using cipher.txt which is deuteronomy 29:29 (the letter a is mapped to itself in the cipher)
